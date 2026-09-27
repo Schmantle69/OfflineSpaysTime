@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sc-offline-services"
+version = "0.1.0"
+description = "Descriptor-driven gRPC emulator for the Star Citizen client's external services, seated beside a local StarBackend"
+requires-python = ">=3.10"
+dependencies = ["grpcio>=1.60", "protobuf>=4.25"]
+
+[project.optional-dependencies]
+dev = ["grpcio-tools>=1.60", "cryptography>=41", "pytest>=7"]
+
+[tool.setuptools.packages.find]
+include = ["sc_offline_services*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

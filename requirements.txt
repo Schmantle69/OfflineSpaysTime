@@ -1,0 +1,5 @@
+grpcio>=1.60
+protobuf>=4.25
+grpcio-tools>=1.60
+cryptography>=41
+pytest>=7

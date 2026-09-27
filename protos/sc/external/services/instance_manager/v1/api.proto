@@ -1,0 +1,22 @@
+// RECONSTRUCTED. The client's catalogue has exactly one rpc on this service.
+syntax = "proto3";
+
+package sc.external.services.instance_manager.v1;
+
+import "sc/external/services/instance_manager/v1/types.proto";
+
+service InstanceManagerService {
+  rpc GetAvailableInstances(GetAvailableInstancesRequest) returns (GetAvailableInstancesResponse);
+}
+
+// Measured: instance_prerequisites=1 map<string, InstancePrerequisites>, shard_id=2, request_activity_report=3.
+message GetAvailableInstancesRequest {
+  map<string, InstancePrerequisites> instance_prerequisites = 1;
+  string shard_id = 2;
+  bool request_activity_report = 3;
+}
+
+// Measured: instance_results=1 repeated InstanceAvailabilityInfo.
+message GetAvailableInstancesResponse {
+  repeated InstanceAvailabilityInfo instance_results = 1;
+}

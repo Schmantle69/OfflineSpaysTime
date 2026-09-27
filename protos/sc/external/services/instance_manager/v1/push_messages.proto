@@ -1,0 +1,70 @@
+// RECONSTRUCTED. Message names and field names measured; field numbers ASSUMED
+// (listed order). These travel to the client as google.protobuf.Any inside
+// PushService.Listen responses; the client never requests them.
+syntax = "proto3";
+
+package sc.external.services.instance_manager.v1;
+
+import "sc/external/services/entitygraph/v1/types.proto";
+import "sc/external/services/instance_manager/v1/types.proto";
+
+message InstanceProvisionStarted { Instance instance = 1; }
+message InstanceProvisionCompleted { Instance instance = 1; }
+message InstanceProvisionFailed { Instance instance = 1; }
+
+message PoolInstanceAssigned { Instance instance = 1; }
+message PoolInstanceCreationStarted { Instance instance = 1; }
+message PoolInstanceCreationCompleted { Instance instance = 1; }
+message PoolInstanceCreationFailed { Instance instance = 1; }
+
+message InstanceUnprovisionStarted { Instance instance = 1; }
+message InstanceUnprovisionCompleted { Instance instance = 1; }
+message InstanceUnprovisionFailed { Instance instance = 1; }
+
+message InstanceAssignmentChanged {
+  Instance instance = 1;
+  string new_assignment_urn = 2;
+  string old_assignment_urn = 3;
+}
+
+message InstanceBecameActive { Instance instance = 1; }
+message InstanceBecameIdle { Instance instance = 1; }
+message InstanceCompleted { Instance instance = 1; }
+
+message PlayerJoinedInstance {
+  Instance instance = 1;
+  uint64 player_geid = 2;
+}
+
+message PlayerLeftInstance {
+  Instance instance = 1;
+  uint64 player_geid = 2;
+}
+
+message StartStowingInstance {
+  Instance instance = 1;
+  string inventory_id = 2;
+  string command_id = 3;
+  string notification_kafka_topic = 4;
+}
+
+message StartUnstowingInstance {
+  Instance instance = 1;
+  string inventory_id = 2;
+  sc.external.services.entitygraph.v1.ShardDestination shard_destination = 3;
+  string command_id = 4;
+  string notification_kafka_topic = 5;
+  oneof snapshot { InstanceEntitySnapshot entity_snapshot = 6; }
+}
+
+message StartBuryingInstance {
+  Instance instance = 1;
+  string command_id = 2;
+  string notification_kafka_topic = 3;
+}
+
+message KickPlayerFromInstance {
+  Instance instance = 1;
+  uint64 player_geid = 2;
+  string reason = 3;
+}

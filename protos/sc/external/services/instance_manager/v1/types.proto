@@ -1,0 +1,105 @@
+// RECONSTRUCTED from the 2026-09-26 decode (sc/external/services/instance_manager/v1/types.proto).
+// Measured field numbers are unmarked; ASSUMED items were not in the records.
+syntax = "proto3";
+
+package sc.external.services.instance_manager.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Measured: UNSPECIFIED=0, PLAYER_HANGAR=1, STAGING_HANGAR=2, DUNGEON_OPEN=3, DUNGEON_CLOSED=4.
+enum InstanceType {
+  INSTANCE_TYPE_UNSPECIFIED = 0;
+  PLAYER_HANGAR = 1;
+  STAGING_HANGAR = 2;
+  DUNGEON_OPEN = 3;
+  DUNGEON_CLOSED = 4;
+}
+
+// Measured: CREATING_UNASSIGNED=1 ... BURYING=9. The zero value name is ASSUMED.
+enum InstanceStatus {
+  INSTANCE_STATUS_UNSPECIFIED = 0;
+  CREATING_UNASSIGNED = 1;
+  CREATING = 2;
+  UNASSIGNED = 3;
+  IDLE = 4;
+  ACTIVE = 5;
+  STOWING = 6;
+  STOWED = 7;
+  UNSTOWING = 8;
+  BURYING = 9;
+}
+
+// Measured: BURY=1, STOW=2.
+enum InstanceCleanupStrategy {
+  INSTANCE_CLEANUP_STRATEGY_UNSPECIFIED = 0;
+  BURY = 1;
+  STOW = 2;
+}
+
+// Field names measured; numbers and scalar types ASSUMED (listed order).
+message InstanceConfig {
+  InstanceCleanupStrategy cleanup_strategy = 1;
+  int64 creation_cooldown = 2;
+  int64 join_cooldown = 3;
+  int64 ttl = 4;
+  bool ignore_cooldowns = 5;
+  bool ignore_creation_limits = 6;
+  uint32 required_party_size = 7;
+}
+
+// Fields not decoded yet.
+message InstancePrerequisites {}
+
+// Measured: instance_oc_path=1 (string), type=2, prerequisites=3, config=4.
+message InstanceTemplate {
+  string instance_oc_path = 1;
+  InstanceType type = 2;
+  InstancePrerequisites prerequisites = 3;
+  InstanceConfig config = 4;
+}
+
+// Measured numbers 1..12. Scalar type of stow_inventory_id and the timestamp
+// types are ASSUMED.
+message Instance {
+  string instance_id = 1;
+  string instance_identifier = 2;
+  string shard_id = 3;
+  map<string, uint64> instance_entity_geids = 4;
+  google.protobuf.Timestamp created_at = 5;
+  InstanceTemplate template = 6;
+  InstanceStatus status = 7;
+  oneof requester { string requester_urn = 8; }
+  oneof assigned_to { string assigned_to_urn = 9; }
+  oneof stow_inventory { string stow_inventory_id = 10; }
+  oneof last_activity { google.protobuf.Timestamp last_activity_at = 11; }
+  oneof completed { google.protobuf.Timestamp completed_at = 12; }
+}
+
+// Fields not decoded yet.
+message InstanceActivityReport {}
+
+// Measured: instance_identifier=1, oneof instance=2 | activity_report=3, eligible=4.
+message InstanceAvailabilityInfo {
+  string instance_identifier = 1;
+  oneof result {
+    Instance instance = 2;
+    InstanceActivityReport activity_report = 3;
+  }
+  bool eligible = 4;
+}
+
+// Field names measured; numbers ASSUMED.
+message InstanceHeartbeat {
+  string instance_id = 1;
+  string shard_id = 2;
+}
+
+message InstanceFilter {
+  string shard_id = 1;
+  repeated string instance_identifiers = 2;
+  repeated string requester_urns = 3;
+  repeated string assigned_to_urns = 4;
+}
+
+// Fields not decoded yet.
+message InstanceEntitySnapshot {}

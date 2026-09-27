@@ -1,0 +1,26 @@
+// RECONSTRUCTED. Measured shape: ListenResponse{envelopes[] PushEnvelope{messages[]
+// PushMessage{control | any}}}. Field numbers and the request/control bodies ASSUMED.
+syntax = "proto3";
+
+package sc.external.services.push.v1;
+
+import "google/protobuf/any.proto";
+
+service PushService {
+  rpc Listen(ListenRequest) returns (stream ListenResponse);
+}
+
+message ListenRequest {}
+
+message PushControl {}
+
+message PushMessage {
+  oneof payload {
+    PushControl control = 1;
+    google.protobuf.Any any = 2;
+  }
+}
+
+message PushEnvelope { repeated PushMessage messages = 1; }
+
+message ListenResponse { repeated PushEnvelope envelopes = 1; }

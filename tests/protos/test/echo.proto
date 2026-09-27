@@ -1,0 +1,17 @@
+// Test-only upstream service used to prove the passthrough proxy.
+syntax = "proto3";
+
+package test.echo;
+
+service EchoService {
+  rpc Echo(EchoRequest) returns (EchoResponse);
+  rpc Fail(EchoRequest) returns (EchoResponse);
+  rpc Stream(EchoRequest) returns (stream EchoResponse);
+  rpc Collect(stream EchoRequest) returns (EchoResponse);
+}
+
+message EchoRequest { string text = 1; }
+message EchoResponse {
+  string text = 1;
+  string header = 2;
+}

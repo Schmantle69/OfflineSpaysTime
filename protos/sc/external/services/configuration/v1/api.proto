@@ -1,0 +1,72 @@
+// RECONSTRUCTED from the 2026-09-26 decode of the client's embedded descriptors
+// (build 4.10.193.11644). Measured field numbers are unmarked; anything marked
+// ASSUMED was not in the records. The emulator loads any FileDescriptorSet, so
+// replace this file with the real sc_client_descriptors.pb when it is available.
+syntax = "proto3";
+
+package sc.external.services.configuration.v1;
+
+service ConfigService {
+  rpc QueryConfig(QueryConfigRequest) returns (QueryConfigResponse);
+  rpc WatchConfig(WatchConfigRequest) returns (stream WatchConfigResponse);
+  rpc WatchMultiConfigurations(WatchMultiConfigurationsRequest)
+      returns (stream WatchMultiConfigurationsResponse);
+}
+
+// Field names measured; numbers and scalar types ASSUMED (listed order).
+message ConfigMatchers {
+  string environment = 1;
+  string session_uuid = 2;
+  string host_uuid = 3;
+  string product = 4;
+  string branch = 5;
+  string build_cl = 6;
+  repeated string labels = 7;
+}
+
+// Measured: config_group=1, config_key=2, curr_node=3, curr_version=4 (int64), matchers=5.
+message ConfigQuery {
+  string config_group = 1;
+  string config_key = 2;
+  string curr_node = 3;
+  int64 curr_version = 4;
+  ConfigMatchers matchers = 5;
+}
+
+// Measured values: FOUND=1, FOUND_NO_UPDATE=2, NOT_FOUND=3. Enum type name ASSUMED.
+enum ConfigResult {
+  CONFIG_RESULT_UNSPECIFIED = 0;
+  FOUND = 1;
+  FOUND_NO_UPDATE = 2;
+  NOT_FOUND = 3;
+}
+
+// Measured: result=1, curr_node=2, config_group=3, config_key=4, value=5 (string), version=6 (uint64).
+message ConfigResponse {
+  ConfigResult result = 1;
+  string curr_node = 2;
+  string config_group = 3;
+  string config_key = 4;
+  string value = 5;
+  uint64 version = 6;
+}
+
+// Wrapper field names measured ("query", "response", "request"); numbers ASSUMED = 1.
+message QueryConfigRequest { ConfigQuery query = 1; }
+message QueryConfigResponse { ConfigResponse response = 1; }
+
+message WatchConfigRequest { ConfigQuery query = 1; }
+message WatchConfigResponse { ConfigResponse response = 1; }
+
+message GroupKeyPair {
+  string config_group = 1;
+  string config_key = 2;
+}
+
+message MultiConfigQuery {
+  repeated GroupKeyPair group_key_pairs = 1;
+  ConfigMatchers matchers = 2;
+}
+
+message WatchMultiConfigurationsRequest { MultiConfigQuery request = 1; }
+message WatchMultiConfigurationsResponse { ConfigResponse response = 1; }

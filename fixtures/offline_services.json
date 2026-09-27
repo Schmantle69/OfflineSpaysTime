@@ -1,0 +1,51 @@
+{
+  "_notes": [
+    "Responses the emulator serves locally. Everything not listed here is proxied to StarBackend.",
+    "config: keyed 'group/key'. A null entry answers NOT_FOUND (kept here so the boot-time keys stay visible).",
+    "A string value is served verbatim; an object value is serialised to JSON before it is served.",
+    "instances: Instance messages in proto-JSON. shard_id '*' is replaced by the shard_id the client asked for.",
+    "push_on_listen: messages pushed the moment a PushService.Listen stream opens; type is the full message name.",
+    "Enums are given as their measured numbers so the fixture also matches the real descriptor set."
+  ],
+
+  "config": {
+    "cvars/variables": null,
+    "cig_trace/trace_filter": null,
+
+    "grpc/endpoints": {
+      "_notes": "Shape unknown until CCIGServices::LoadChannelConfiguration (0x140FAC050) is read. Keys 'endpoints', 'queues', 'channels' were seen in the loader. Disabled until then.",
+      "disabled": true,
+      "version": 1,
+      "value": {
+        "endpoints": {},
+        "queues": {},
+        "channels": {}
+      }
+    },
+
+    "services/instance_manager_external": {
+      "_notes": "Never requested by the client as of Addendum E. Inner keys unknown; served only when the client asks. Mirror the shape identity_external comes back with once captured.",
+      "disabled": true,
+      "version": 1,
+      "value": {}
+    }
+  },
+
+  "instances": [
+    {
+      "_notes": "One stowed personal hangar. instance_oc_path names a socpak that exists in the P4K.",
+      "instance_id": "00000000-0000-4000-8000-000000000001",
+      "instance_identifier": "personal_hangar:offline:1",
+      "shard_id": "*",
+      "status": 7,
+      "template": {
+        "instance_oc_path": "objectcontainers/pu/loc/mod/common/hangar/util_a/hangar_smltop_001.socpak",
+        "type": 1,
+        "config": { "cleanup_strategy": 2 }
+      },
+      "stow_inventory_id": "offline-hangar-inventory-1"
+    }
+  ],
+
+  "push_on_listen": []
+}

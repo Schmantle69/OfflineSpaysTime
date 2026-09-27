@@ -1,0 +1,6 @@
+// RECONSTRUCTED placeholder. Only the message name is measured; the body is ASSUMED.
+syntax = "proto3";
+
+package sc.external.services.entitygraph.v1;
+
+message ShardDestination { string shard_id = 1; }
