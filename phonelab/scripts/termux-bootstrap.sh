@@ -44,14 +44,35 @@ log "Termux detected. PREFIX=$PREFIX"
 # procps  : REA's owned-process ownership check needs a real `ps`
 # build-essential python clang: in case a REA native addon has no aarch64 prebuild
 # git curl which: fetch + scripting
-log "refreshing package index (pkg update)"
-yes | pkg update  >/dev/null 2>&1 || warn "pkg update had warnings; continuing"
+log "refreshing package index (pkg update) — watch for repo errors here"
+yes | pkg update 2>&1 | tail -6 || warn "pkg update returned non-zero"
 
-log "installing: nodejs openjdk-17 git curl which procps build-essential python clang"
-yes | pkg install nodejs openjdk-17 git curl which procps build-essential python clang \
-  || die "package install failed. Re-run; if nodejs is the problem try: pkg install nodejs-lts"
+# Core packages, Java handled separately (its package name varies, and apktool
+# is the only thing that needs it — a missing JDK shouldn't block REA itself).
+log "installing core: nodejs git curl which procps build-essential python clang"
+yes | pkg install nodejs git curl which procps build-essential python clang \
+  || die "core package install failed. If 'pkg update' errored above, your Termux
+  repo is unreachable — the Play Store Termux build is deprecated and its package
+  repo is stale. Reinstall Termux from F-Droid (see docs/termux.md), then re-run."
 
-log "node $(node --version 2>/dev/null), $(java -version 2>&1 | head -1)"
+# A JDK for apktool. Try the common Termux package names in turn.
+log "installing a JDK for apktool (trying openjdk-17, openjdk-21, openjdk)"
+JAVA_PKG=""
+for p in openjdk-17 openjdk-21 openjdk; do
+  if yes | pkg install "$p" 2>/dev/null && command -v java >/dev/null; then
+    JAVA_PKG="$p"; break
+  fi
+done
+if [ -n "$JAVA_PKG" ]; then
+  log "installed $JAVA_PKG — $(java -version 2>&1 | head -1)"
+else
+  warn "no OpenJDK could be installed (tried openjdk-17/21/openjdk). apktool and
+  any JVM engine will be UNAVAILABLE. On the Play Store Termux build this is
+  expected — its repo is stale. Reinstall Termux from F-Droid (docs/termux.md),
+  then re-run. REA's non-apktool tools may still work below."
+fi
+
+log "node $(node --version 2>/dev/null)"
 
 # REA requires node ^22.23.4 || ^24.22.1 || >=26.12.1. npm only warns on a
 # mismatch, so verify and surface it rather than let REA fail opaquely later.
@@ -84,8 +105,13 @@ else
 fi
 
 # --- 4. apktool (arch-independent fat jar from Maven Central) ---------------
+# Needs a JVM. If none installed above, skip cleanly rather than leave a broken
+# wrapper REA would then fail to probe.
 mkdir -p "$TOOLS/bin" "$TOOLS/engines"
-if [ ! -s "$TOOLS/engines/apktool.jar" ]; then
+if ! command -v java >/dev/null; then
+  warn "skipping apktool setup: no java on PATH (install a JDK, then re-run)"
+  REA_APKTOOL_COMMAND=""
+elif [ ! -s "$TOOLS/engines/apktool.jar" ]; then
   log "fetching apktool ${APKTOOL_VERSION} from Maven Central"
   if curl -fsSL --retry 3 --retry-delay 2 -o "$TOOLS/engines/apktool.jar.part" "$APKTOOL_URL"; then
     mv "$TOOLS/engines/apktool.jar.part" "$TOOLS/engines/apktool.jar"
@@ -94,14 +120,14 @@ if [ ! -s "$TOOLS/engines/apktool.jar" ]; then
     yes | pkg install apktool && APKTOOL_PKG=1 || die "apktool unavailable via Maven and pkg"
   fi
 fi
-if [ -s "$TOOLS/engines/apktool.jar" ]; then
+if command -v java >/dev/null && [ -s "$TOOLS/engines/apktool.jar" ]; then
   # stdout must stay clean: REA parses the first line of --version as semver.
   printf '%s\n' '#!/data/data/com.termux/files/usr/bin/bash' \
                 "exec java -jar $TOOLS/engines/apktool.jar \"\$@\"" > "$TOOLS/bin/apktool"
   chmod +x "$TOOLS/bin/apktool"
   REA_APKTOOL_COMMAND="$TOOLS/bin/apktool"
-else
-  REA_APKTOOL_COMMAND="$(command -v apktool || true)"
+elif command -v apktool >/dev/null; then
+  REA_APKTOOL_COMMAND="$(command -v apktool)"
 fi
 [ -n "${REA_APKTOOL_COMMAND:-}" ] && log "apktool: $("$REA_APKTOOL_COMMAND" --version 2>/dev/null | tail -1) ($REA_APKTOOL_COMMAND)"
 
