@@ -19,9 +19,12 @@ channel. Running Claude Code *on the device* removes that wall entirely.
 2. Open Termux and run:
    ```bash
    pkg install -y git
-   git clone https://github.com/Schmantle69/OfflineSpaysTime
+   # phonelab/ lives on the ccr-fe71709d-89o6w8 branch, not main — clone it:
+   git clone -b ccr-fe71709d-89o6w8 https://github.com/Schmantle69/OfflineSpaysTime
    bash OfflineSpaysTime/phonelab/scripts/termux-bootstrap.sh
    ```
+   (Already cloned the default branch? Just
+   `cd OfflineSpaysTime && git checkout ccr-fe71709d-89o6w8` first.)
 3. When the **storage permission dialog** appears, tap **Allow** — that's what
    maps `~/storage/shared` to `/storage/emulated/0`.
 
