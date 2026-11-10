@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "rea": {
+      "command": "node",
+      "args": [
+        "/opt/rea-tools/node_modules/rea-agents/scripts/rea.mjs",
+        "mcp"
+      ],
+      "env": {
+        "REA_APKTOOL_COMMAND": "/opt/rea-tools/bin/apktool",
+        "REA_MCP_OUTPUT_SCHEMA_PROFILE": "compact"
+      }
+    }
+  }
+}
