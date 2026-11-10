@@ -1,0 +1,26 @@
+# Binaries under study never enter history. They are large, and most are
+# redistribution-restricted. Keep them in targets/<app>/ locally only.
+*.apk
+*.apks
+*.xapk
+*.apkm
+*.aab
+*.dex
+*.so
+*.jar
+!scripts/**/*.jar.sha256
+
+# Decoded / decompiled trees are reproducible from the APK + a recorded command.
+targets/*/decoded/
+targets/*/sources/
+targets/*/unpacked/
+
+# Raw REA evidence bundles can be large; commit the distilled finding instead.
+evidence/*.json
+evidence/*.jsonl
+!evidence/README.md
+
+# Tooling
+node_modules/
+.rea-tools/
+*.log
