@@ -30,12 +30,6 @@ bash scripts/triage-apk.sh /path/to/app.apk x  # identity, signing, manifest
 
 Then read `findings/x.md` and follow `docs/workflow.md` to go deeper.
 
-> **Nested in OfflineSpaysTime:** this lab lives in `phonelab/`, so Claude
-> Code's root `.mcp.json` auto-discovery won't pick up `phonelab/.mcp.json`.
-> To use REA's MCP tools, either copy `phonelab/.mcp.json` to the repo root,
-> or just drive REA from the CLI (`/opt/rea-tools/node_modules/.bin/rea ...`)
-> after `scripts/setup-rea.sh` — same operations, same Evidence.
-
 ## What runs where
 
 - **Default cloud session (what you get from mobile):** REA + apktool. Enough
@@ -46,6 +40,13 @@ Then read `findings/x.md` and follow `docs/workflow.md` to go deeper.
 - **+ Ghidra or IDA:** native `.so` / IL2CPP decompilation.
 - **+ a device over adb (desktop-served folder, not mobile-only):** live
   inspection, logcat, Frida instrumentation.
+
+## Run it on the phone itself (no uploads)
+
+Prefer native access to your phone's files over uploading each APK? Run Claude
+Code + REA on-device in Termux — see `docs/termux.md`. One script installs the
+whole toolchain and wires REA into an on-device Claude Code that can read
+`/storage/emulated/0` directly.
 
 ## Scope and intent
 
